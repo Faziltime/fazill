@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore, collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
+import app from '@/lib/firebase';
 
 interface Payment {
   id: string;
@@ -10,7 +11,7 @@ interface Payment {
   createdAt?: Date | Timestamp | { toDate(): Date; toISOString?(): string };
 }
 
-const db = getFirestore();
+const db = getFirestore(app);
 
 // Get payment analytics with filtering and pagination
 export async function GET(request: NextRequest) {
