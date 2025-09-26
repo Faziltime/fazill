@@ -11,6 +11,7 @@ import {
   getDocs,
   updateDoc,
   doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useParams, useRouter } from "next/navigation";
@@ -78,6 +79,7 @@ export default function ChatPage() {
   const [uploading, setUploading] = useState(false);
   const [messageClicked, setMessageClicked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [hoveredMessage, setHoveredMessage] = useState<string | null>(null);
 
   // Reset back button state if peer changes
   useEffect(() => {
@@ -262,6 +264,16 @@ export default function ChatPage() {
     }
   };
 
+  const deleteMessage = async (messageId: string) => {
+    if (!messageId || !currentUser?.email) return;
+    if (!confirm('Delete this message?')) return;
+    try {
+      await deleteDoc(doc(db, 'messages', messageId));
+    } catch {
+      alert('Failed to delete message');
+    }
+  };
+
   if (!peerEmail) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -388,9 +400,13 @@ export default function ChatPage() {
                 const isMine = m.fromEmail === currentUser?.email;
                 const label = isMine ? 'You' : (peerProfile?.displayName || peerProfile?.email || peerEmail);
                 return (
-                  <div key={m.id} className={`flex items-end gap-3 p-4 ${isMine ? 'justify-end' : ''}`}
+                  <div 
+                    key={m.id} 
+                    className={`flex items-end gap-3 p-4 ${isMine ? 'justify-end' : ''} relative group`}
                     onClick={() => setMessageClicked(true)}
                     style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => setHoveredMessage(m.id || null)}
+                    onMouseLeave={() => setHoveredMessage(null)}
                   >
                     {!isMine && (
                       <div
@@ -412,9 +428,23 @@ export default function ChatPage() {
                           {m.text}
                         </p>
                       )}
-                      <span className="text-[10px] text-[#49739c]">
-                        {formatTimestamp(m.createdAt)}{isMine ? (m.read ? ' · ✓✓' : ' · ✓') : ''}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-[#49739c]">
+                          {formatTimestamp(m.createdAt)}{isMine ? (m.read ? ' · ✓✓' : ' · ✓') : ''}
+                        </span>
+                        {isMine && hoveredMessage === m.id && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteMessage(m.id || '');
+                            }}
+                            className="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Delete message"
+                          >
+                            🗑️
+                          </button>
+                        )}
+                      </div>
                     </div>
                     {isMine && (
                       <div
