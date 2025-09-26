@@ -1214,6 +1214,16 @@ export default function DashboardPage() {
                     <button className={`flex items-center ${userVote === 'dislike' ? 'text-red-600 font-bold' : 'text-gray-600'} hover:text-red-600`} onClick={() => handleVote('dislike')} disabled={dislikeLoading}>
                       <span className="material-symbols-outlined mr-1">thumb_down</span> {selectedPost.downvotes || 0}
                     </button>
+                    {user && selectedPost.user === user.email && (
+                      <button 
+                        className="flex items-center text-red-500 hover:text-red-700 transition-colors"
+                        onClick={handleDeletePost}
+                        title="Delete post"
+                      >
+                        <span className="material-symbols-outlined mr-1">delete</span>
+                        Delete
+                      </button>
+                    )}
                     <div className="flex items-center text-gray-600">
                       <span className="text-base font-medium">{selectedPost.views || 0} views</span>
                     </div>
