@@ -1001,6 +1001,26 @@ export default function DashboardPage() {
                   <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
                       <span>{getUserDisplayName(post.user, post.userDisplayName)} • {formatDate(post.createdAt)}</span>
                     <div className="flex items-center space-x-2">
+                      {user && post.user === user.email && (
+                        <button
+                          className="flex items-center text-red-500 hover:text-red-700 transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                          title="Delete post"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!window.confirm("Are you sure you want to delete this post?")) return;
+                            try {
+                              await deleteDoc(doc(db, "posts", post.id));
+                              const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+                              const querySnapshot = await getDocs(q);
+                              setPosts(shuffleArray(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post))));
+                            } catch {
+                              alert("Failed to delete post");
+                            }
+                          }}
+                        >
+                          <span className="material-icons text-base mr-1">delete</span>
+                        </button>
+                      )}
                       <button
                         className={`flex items-center ${savedPostIds.has(post.id) ? 'text-blue-600' : 'text-gray-400'} hover:text-blue-600 transition-all duration-200 hover:scale-110`}
                         title={savedPostIds.has(post.id) ? 'Unsave' : 'Save'}
