@@ -438,7 +438,7 @@ export default function ChatPage() {
                               e.stopPropagation();
                               deleteMessage(m.id || '');
                             }}
-                            className="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition-opacity mt-1"
                             title="Delete message"
                           >
                             🗑️
