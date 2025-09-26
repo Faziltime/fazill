@@ -428,7 +428,7 @@ export default function ChatPage() {
                           {m.text}
                         </p>
                       )}
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-start gap-1">
                         <span className="text-[10px] text-[#49739c]">
                           {formatTimestamp(m.createdAt)}{isMine ? (m.read ? ' · ✓✓' : ' · ✓') : ''}
                         </span>
@@ -438,7 +438,7 @@ export default function ChatPage() {
                               e.stopPropagation();
                               deleteMessage(m.id || '');
                             }}
-                            className="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+                            className="text-red-500 hover:text-red-700 text-sm opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded px-1 shadow-sm"
                             title="Delete message"
                           >
                             🗑️
