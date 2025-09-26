@@ -172,6 +172,23 @@ const ProfilePostFullView: React.FC<{ post: Post, user: User, onClose: () => voi
       <button className="absolute top-4 right-6 text-gray-400 hover:text-gray-700 z-10" onClick={onClose}>
         <span className="material-symbols-outlined text-3xl">close</span>
       </button>
+      {user && post.user === user.email && (
+        <button
+          className="absolute top-4 right-20 w-10 h-10 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-all duration-200 flex items-center justify-center z-10"
+          onClick={async () => {
+            if (!window.confirm('Delete this post?')) return;
+            try {
+              await deleteDoc(doc(db, 'posts', post.id));
+              onClose();
+            } catch {
+              alert('Failed to delete post');
+            }
+          }}
+          title="Delete post"
+        >
+          <span className="material-icons text-lg">delete_outline</span>
+        </button>
+      )}
       <div className="flex flex-col flex-1 justify-center items-center w-full h-full pt-16 pb-8 px-4">
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg border border-gray-200 p-12 mx-auto text-lg">
           <div className="flex flex-col items-center mb-6">
@@ -461,10 +478,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, currentUserE
               {posts.map(post => (
                 <div
                   key={post.id}
-                  className="p-4 rounded-xl bg-white border border-gray-100 flex flex-col items-start shadow-sm cursor-pointer hover:shadow-md hover:border-blue-200 transition"
+                  className="p-4 rounded-xl bg-white border border-gray-100 flex flex-col items-start shadow-sm cursor-pointer hover:shadow-md hover:border-blue-200 transition group relative"
                   onClick={() => setSelectedPost(post)}
                 >
-                  <h3 className="font-medium text-gray-900 text-base">{post.title}</h3>
+                  {currentUserEmail === user.email && (
+                    <button
+                      className="absolute top-3 right-3 w-7 h-7 rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!window.confirm('Delete this post?')) return;
+                        try {
+                          await deleteDoc(doc(db, 'posts', post.id));
+                          setPosts(prev => prev.filter(p => p.id !== post.id));
+                        } catch {
+                          alert('Failed to delete post');
+                        }
+                      }}
+                      title="Delete post"
+                    >
+                      <span className="material-icons text-sm">close</span>
+                    </button>
+                  )}
+                  <h3 className="font-medium text-gray-900 text-base pr-8">{post.title}</h3>
                   <p className="text-gray-500 mt-1 text-sm line-clamp-2">{post.problem}</p>
                   <div className="mt-2 flex items-center gap-4 text-xs text-gray-400">
                     <span className={`px-2 py-0.5 rounded-full border ${getCategoryColor(post.category)}`}>{post.category}</span>
