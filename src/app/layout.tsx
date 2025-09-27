@@ -24,10 +24,15 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "GetSolutions - AI-Powered Problem Solving Platform",
+  title: {
+    default: "GetSolutions - AI-Powered Problem Solving Platform",
+    template: "%s | GetSolutions"
+  },
   description: "Get instant solutions to your problems with our AI-powered platform. Chat, solve, and learn with advanced artificial intelligence technology.",
   keywords: "AI solutions, problem solving, artificial intelligence, chat AI, GetSolutions",
   authors: [{ name: "Fazil" }],
+  applicationName: "GetSolutions",
+  generator: "Next.js",
   openGraph: {
     title: "GetSolutions - AI-Powered Problem Solving Platform",
     description: "Get instant solutions to your problems with our AI-powered platform.",
@@ -44,7 +49,8 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-};
+  metadataBase: new URL('https://getsolutions.vercel.app'),
+};}
 
 export default function RootLayout({
   children,
