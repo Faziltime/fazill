@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   metadataBase: new URL('https://getsolutions.vercel.app'),
-};}
+};
 
 export default function RootLayout({
   children,
