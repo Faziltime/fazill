@@ -60,6 +60,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <title>GetSolutions - AI-Powered Problem Solving Platform</title>
+        <meta name="application-name" content="GetSolutions" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap&v=2" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap&v=2" rel="stylesheet" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
