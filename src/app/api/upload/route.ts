@@ -14,6 +14,26 @@ const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/j
 
 export async function POST(req: Request) {
   try {
+    // Check Cloudinary configuration first
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    
+    console.log('Cloudinary config check:', {
+      cloudName: !!cloudName,
+      apiKey: !!apiKey,
+      apiSecret: !!apiSecret
+    });
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error('Missing Cloudinary environment variables:', {
+        CLOUDINARY_CLOUD_NAME: !!cloudName,
+        CLOUDINARY_API_KEY: !!apiKey,
+        CLOUDINARY_API_SECRET: !!apiSecret
+      });
+      return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
+    }
+
     const form = await req.formData();
     const file = form.get('file');
 
@@ -27,10 +47,6 @@ export async function POST(req: Request) {
 
     if (file.size > MAX_BYTES) {
       return NextResponse.json({ error: 'File too large (max 8MB)' }, { status: 413 });
-    }
-
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
     }
 
     const arrayBuffer = await file.arrayBuffer();
