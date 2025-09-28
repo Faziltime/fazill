@@ -14,26 +14,6 @@ const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/j
 
 export async function POST(req: Request) {
   try {
-    // Check Cloudinary configuration first
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const apiKey = process.env.CLOUDINARY_API_KEY;
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
-    
-    console.log('Cloudinary config check:', {
-      cloudName: !!cloudName,
-      apiKey: !!apiKey,
-      apiSecret: !!apiSecret
-    });
-
-    if (!cloudName || !apiKey || !apiSecret) {
-      console.error('Missing Cloudinary environment variables:', {
-        CLOUDINARY_CLOUD_NAME: !!cloudName,
-        CLOUDINARY_API_KEY: !!apiKey,
-        CLOUDINARY_API_SECRET: !!apiSecret
-      });
-      return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
-    }
-
     const form = await req.formData();
     const file = form.get('file');
 
@@ -49,6 +29,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'File too large (max 8MB)' }, { status: 413 });
     }
 
+    // Check Cloudinary configuration
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      // Fallback: convert to base64 data URL
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      const dataUrl = `data:${file.type};base64,${base64}`;
+      
+      return NextResponse.json({
+        url: dataUrl,
+        public_id: `fallback_${Date.now()}`,
+        bytes: file.size,
+        format: file.type.split('/')[1],
+        width: 0,
+        height: 0,
+      });
+    }
+
+    // Use Cloudinary when properly configured
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
