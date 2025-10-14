@@ -287,7 +287,7 @@ export default function ChatPage() {
       {/* Content */}
       <div className="gap-1 px-4 sm:px-6 flex flex-1 justify-center py-5">
         {/* Left pane: conversations */}
-        <aside className="flex flex-col w-72 md:w-80 sticky top-0 h-screen">
+        <aside className="hidden lg:flex flex-col w-72 md:w-80 sticky top-0 h-screen">
           <div className="px-4 py-3 flex-shrink-0">
             <button
               onClick={() => router.push('/dashboard')}
@@ -345,14 +345,24 @@ export default function ChatPage() {
         </aside>
 
         {/* Right pane: conversation */}
-        <section className="flex flex-col max-w-[960px] flex-1 bg-white rounded-xl border border-[#e7edf4] overflow-hidden h-screen">
+        <section className="flex flex-col max-w-[960px] flex-1 bg-white rounded-xl border border-[#e7edf4] overflow-hidden h-screen w-full lg:w-auto">
           {/* Chat header: back button and peer avatar */}
           <div className="sticky top-0 z-10 bg-white border-b border-[#e7edf4] py-2 flex-shrink-0">
             <div className="relative flex items-center px-4">
+              {/* Mobile back button - always visible on mobile */}
+              <button 
+                onClick={() => router.push('/dashboard')}
+                className="lg:hidden p-2 mr-2 text-gray-600 hover:text-gray-900"
+                aria-label="Back to dashboard"
+              >
+                <span className="material-icons">arrow_back</span>
+              </button>
+              
+              {/* Desktop conditional back button */}
               {messageClicked && (
                 <button 
                   onClick={() => router.push('/dashboard')}
-                  className="p-2 mr-2 text-gray-600 hover:text-gray-900"
+                  className="hidden lg:block p-2 mr-2 text-gray-600 hover:text-gray-900"
                   aria-label="Back to dashboard"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -360,8 +370,9 @@ export default function ChatPage() {
                   </svg>
                 </button>
               )}
+              
               <div className="flex-1 flex justify-center">
-                <div className="w-14 h-14 rounded-full border border-gray-200 overflow-hidden bg-gray-100">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-gray-200 overflow-hidden bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={peerProfile?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(peerProfile?.displayName || peerProfile?.email || peerEmail)}`}
@@ -370,9 +381,10 @@ export default function ChatPage() {
                   />
                 </div>
               </div>
+              
               <button
                 onClick={() => router.push('/dashboard')}
-                className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="hidden lg:block p-2 text-gray-600 hover:text-gray-900 transition-colors"
                 aria-label="Close message"
               >
                 <span className="material-icons">close</span>
@@ -392,7 +404,7 @@ export default function ChatPage() {
                 <span>Back</span>
               </button>
             )}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 px-2 sm:px-0">
               {messages.length === 0 && (
                 <div className="text-center text-xs text-[#49739c] py-8">Say hi 👋</div>
               )}
@@ -402,7 +414,7 @@ export default function ChatPage() {
                 return (
                   <div 
                     key={m.id} 
-                    className={`flex items-end gap-3 p-4 ${isMine ? 'justify-end' : ''} relative group`}
+                    className={`flex items-end gap-2 sm:gap-3 p-2 sm:p-4 ${isMine ? 'justify-end' : ''} relative group`}
                     onClick={() => setMessageClicked(true)}
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={() => setHoveredMessage(m.id || null)}
@@ -410,19 +422,19 @@ export default function ChatPage() {
                   >
                     {!isMine && (
                       <div
-                        className="bg-center bg-no-repeat bg-cover rounded-full w-10 h-10 shrink-0"
+                        className="bg-center bg-no-repeat bg-cover rounded-full w-8 h-8 sm:w-10 sm:h-10 shrink-0"
                         style={{ backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(label)})` }}
                       />
                     )}
                     <div className={`flex flex-1 flex-col gap-1 ${isMine ? 'items-end' : 'items-start'}`}>
-                      <p className={`text-[#49739c] text-[13px] max-w-[360px] ${isMine ? 'text-right' : ''}`}>{label}</p>
+                      <p className={`text-[#49739c] text-[11px] sm:text-[13px] max-w-[280px] sm:max-w-[360px] ${isMine ? 'text-right' : ''}`}>{label}</p>
                       {m.imageUrl ? (
-                        <div className="block max-w-[320px] rounded-xl overflow-hidden border border-gray-200">
+                        <div className="block max-w-[320px] sm:max-w-[280px] rounded-xl overflow-hidden border border-gray-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={m.imageUrl} alt="image" className="w-full h-auto object-cover" loading="lazy" />
                         </div>
                       ) : (
-                        <p className={`text-base leading-normal flex max-w-[360px] rounded-xl px-4 py-3 ${
+                        <p className={`text-base leading-normal flex max-w-[280px] sm:max-w-[360px] rounded-xl px-4 py-3 ${
                           isMine ? 'bg-[#258df4] text-slate-50' : 'bg-[#e7edf4] text-[#0d141c]'
                         }`}>
                           {m.text}
@@ -448,7 +460,7 @@ export default function ChatPage() {
                     </div>
                     {isMine && (
                       <div
-                        className="bg-center bg-no-repeat bg-cover rounded-full w-10 h-10 shrink-0"
+                        className="bg-center bg-no-repeat bg-cover rounded-full w-8 h-8 sm:w-10 sm:h-10 shrink-0"
                         style={{ backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser?.displayName || currentUser?.email || 'You')})` }}
                       />
                     )}
@@ -459,7 +471,7 @@ export default function ChatPage() {
           </div>
 
           {/* Composer */}
-          <div className="sticky bottom-0 bg-white border-t border-[#e7edf4] px-4 py-3 gap-3 @container z-10 flex-shrink-0">
+          <div className="sticky bottom-0 bg-white border-t border-[#e7edf4] px-2 sm:px-4 py-3 gap-3 @container z-10 flex-shrink-0">
             <label className="flex flex-col h-12 w-full">
               <div className="flex w-full items-stretch rounded-xl h-full">
                 <input
